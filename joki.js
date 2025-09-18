@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const sectionTitleReview = document.getElementById('section-title-review');
     let currentRating = 0;
 
-    // Logika untuk otentikasi link: hanya menampilkan formulir ulasan jika ada ID unik di URL.
+    // Logika untuk otentikasi link
     const urlParams = new URLSearchParams(window.location.search);
     const uniqueId = urlParams.get('id');
 
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (invalidLinkMessage) invalidLinkMessage.style.display = 'block';
     }
 
-    // --- FUNGSI & EVENT LISTENERS ---
+    // === FUNGSI & EVENT LISTENERS ===
     
     // --- LOGIKA HAMBURGER BUTTON ---
     hamburgerBtn.addEventListener('click', () => {
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- LOGIKA RATING & ULASAN DENGAN FIREBASE ---
     
-    // Fungsi untuk menampilkan semua ulasan (public)
+    // Fungsi untuk menampilkan ulasan
     function displayReviews(reviewsData) {
         if (!reviewsList) return;
         reviewsList.innerHTML = '';
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 reviewItem.classList.add('review-item');
                 reviewItem.dataset.phone = review.phone;
                 reviewItem.dataset.key = review.key;
-                reviewItem.dataset.uniqueId = review.uniqueId; // Tambahkan uniqueId untuk otentikasi edit
+                reviewItem.dataset.uniqueId = review.uniqueId;
 
                 const starIcons = '<i class="fas fa-star"></i>'.repeat(review.rating) + '<i class="far fa-star"></i>'.repeat(5 - review.rating);
 
@@ -206,13 +206,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // Mengambil semua ulasan dari Firebase secara real-time dan menampilkannya untuk publik
+    // Mengambil ulasan dari Firebase secara real-time dan menampilkannya
     reviewsRef.on('value', (snapshot) => {
         const reviewsData = snapshot.val();
         displayReviews(reviewsData);
     });
 
-    // Mengatur rating bintang saat diklik (hanya jika formulir ditampilkan)
+    // Mengatur rating bintang saat diklik
     if (ratingStars) {
         ratingStars.addEventListener('click', (event) => {
             const target = event.target;
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Mengirim formulir ulasan ke Firebase (hanya jika formulir ditampilkan)
+    // Mengirim formulir ulasan ke Firebase
     if (reviewForm) {
         reviewForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Mengelola tombol edit dan hapus (hanya jika ulasan milik user itu)
+    // Mengelola tombol edit dan hapus
     if (reviewsList) {
         reviewsList.addEventListener('click', (event) => {
             const target = event.target;
@@ -294,9 +294,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const reviewKey = reviewItem.dataset.key;
             const reviewPhone = reviewItem.dataset.phone;
-            const reviewUniqueId = reviewItem.dataset.uniqueId; // Ambil uniqueId dari ulasan
+            const reviewUniqueId = reviewItem.dataset.uniqueId;
             
-            // Verifikasi apakah user yang login memiliki uniqueId yang sama dengan ulasan
             if (uniqueId && uniqueId === reviewUniqueId) {
                  const loggedInPhone = prompt('Untuk mengelola ulasan, masukkan Nomor HP Anda:');
                  if (loggedInPhone === reviewPhone) {
@@ -337,7 +336,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         reviewsList.addEventListener('mouseover', (event) => {
             const reviewItem = event.target.closest('.review-item');
-            // Hanya tampilkan tombol jika uniqueId dari URL cocok dengan uniqueId ulasan
             if (reviewItem && uniqueId && uniqueId === reviewItem.dataset.uniqueId) {
                  reviewItem.querySelector('.review-actions').style.display = 'block';
             }
