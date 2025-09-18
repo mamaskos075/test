@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
       databaseURL: "https://review-maskos-default-rtdb.asia-southeast1.firebasedatabase.app/",
       projectId: "review-maskos-default-rtdb",
       storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSaging_SENDER_ID",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
       appId: "YOUR_APP_ID"
     };
 
@@ -278,8 +278,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // MENGAMBIL SEMUA ULASAN SECARA PUBLIK (PERBAIKAN UTAMA)
-    // Logika ini berjalan di setiap halaman dimuat, terlepas dari URL
+    // BAGIAN PENTING UNTUK MENAMPILKAN ULASAN PUBLIK
+    // Listener ini akan mengambil semua ulasan dan menampilkannya saat halaman dimuat, 
+    // terlepas dari apakah URL memiliki parameter 'id' atau tidak.
     reviewsRef.on('value', (snapshot) => {
         const reviewsData = snapshot.val();
         displayReviews(reviewsData);
