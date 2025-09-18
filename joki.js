@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let keranjangIcon = document.getElementById('keranjang');
     let cartPopup = document.getElementById('cart-popup');
     let cartCount = document.getElementById('cart-count');
-    let cartItemsContainer = document.getElementById('cart-items');
+    const cartItemsContainer = document.getElementById('cart-items');
     
     // Elemen total keranjang
     const subTotalPriceElement = document.getElementById('sub-total-price');
@@ -84,28 +84,62 @@ document.addEventListener('DOMContentLoaded', function () {
     const reviewForm = document.getElementById('review-form');
     const ratingStars = document.getElementById('rating-stars');
     const reviewsList = document.getElementById('reviews-list');
-    const sectionTitleReview = document.getElementById('section-title-review');
+    const customAlert = document.getElementById('custom-alert');
+    const customAlertMessage = document.getElementById('custom-alert-message');
+    const customAlertCloseBtn = document.getElementById('custom-alert-close');
     let currentRating = 0;
+
+    // Fungsi untuk menampilkan notifikasi kustom
+    function showAlert(message) {
+        if (!customAlert || !customAlertMessage) return;
+        customAlertMessage.textContent = message;
+        customAlert.style.display = 'flex';
+        setTimeout(() => {
+            customAlert.style.display = 'none';
+        }, 3000); // Notifikasi akan hilang setelah 3 detik
+    }
+
+    if (customAlertCloseBtn) {
+        customAlertCloseBtn.addEventListener('click', () => {
+            customAlert.style.display = 'none';
+        });
+    }
 
     // Logika untuk otentikasi link
     const urlParams = new URLSearchParams(window.location.search);
     const uniqueId = urlParams.get('id');
 
+    // Menampilkan pesan atau formulir berdasarkan keberadaan ulasan dan ID unik
     if (uniqueId) {
-        if (reviewFormContainer) reviewFormContainer.style.display = 'block';
-        if (invalidLinkMessage) invalidLinkMessage.style.display = 'none';
+        reviewsRef.orderByChild('uniqueId').equalTo(uniqueId).once('value', snapshot => {
+            if (snapshot.exists()) {
+                if (reviewFormContainer) reviewFormContainer.style.display = 'none';
+                if (invalidLinkMessage) {
+                    invalidLinkMessage.innerHTML = `<h2 class="section-title">Terima kasih atas ulasan Anda!</h2><p class="section-description">Anda sudah memberikan ulasan untuk pesanan ini. Silakan hubungi admin jika ada kendala.</p>`;
+                    invalidLinkMessage.style.display = 'block';
+                }
+            } else {
+                if (reviewFormContainer) reviewFormContainer.style.display = 'block';
+                if (invalidLinkMessage) invalidLinkMessage.style.display = 'none';
+            }
+        });
     } else {
         if (reviewFormContainer) reviewFormContainer.style.display = 'none';
-        if (invalidLinkMessage) invalidLinkMessage.style.display = 'block';
+        if (invalidLinkMessage) {
+            invalidLinkMessage.innerHTML = `<h2 class="section-title">Berikan Ulasan Terbaikmu!</h2><p class="section-description">Untuk memberikan ulasan, Anda harus memiliki tautan khusus dari admin.</p>`;
+            invalidLinkMessage.style.display = 'block';
+        }
     }
 
     // === FUNGSI & EVENT LISTENERS ===
     
     // --- LOGIKA HAMBURGER BUTTON ---
-    hamburgerBtn.addEventListener('click', () => {
-        navbar.classList.toggle('active');
-        cartPopup.classList.remove('active');
-    });
+    if (hamburgerBtn && navbar) {
+        hamburgerBtn.addEventListener('click', () => {
+            navbar.classList.toggle('active');
+            if (cartPopup) cartPopup.classList.remove('active');
+        });
+    }
 
     // --- LOGIKA POP-UP DETAIL PRODUK ---
     document.querySelectorAll('.view-details').forEach(button => {
@@ -115,21 +149,25 @@ document.addEventListener('DOMContentLoaded', function () {
             const productDescription = productCard.querySelector('.product-description').textContent;
             const discountPrice = productCard.querySelector('.discount-price').textContent;
             
-            popupProductTitle.textContent = productTitle;
-            popupProductDescription.textContent = productDescription;
-            popupProductPrice.textContent = `${discountPrice} (Harga DP)`;
+            if (popupProductTitle) popupProductTitle.textContent = productTitle;
+            if (popupProductDescription) popupProductDescription.textContent = productDescription;
+            if (popupProductPrice) popupProductPrice.textContent = `${discountPrice} (Harga DP)`;
 
-            addToCartPopupBtn.setAttribute('data-product-id', productCard.getAttribute('data-product-id'));
-            addToCartPopupBtn.setAttribute('data-original-price', productCard.getAttribute('data-price'));
-            addToCartPopupBtn.setAttribute('data-discount-price', productCard.getAttribute('data-discount-price'));
+            if (addToCartPopupBtn) {
+                addToCartPopupBtn.setAttribute('data-product-id', productCard.getAttribute('data-product-id'));
+                addToCartPopupBtn.setAttribute('data-original-price', productCard.getAttribute('data-price'));
+                addToCartPopupBtn.setAttribute('data-discount-price', productCard.getAttribute('data-discount-price'));
+            }
 
-            productDetailPopup.classList.add('active');
+            if (productDetailPopup) productDetailPopup.classList.add('active');
         });
     });
 
-    closePopupBtn.addEventListener('click', () => {
-        productDetailPopup.classList.remove('active');
-    });
+    if (closePopupBtn) {
+        closePopupBtn.addEventListener('click', () => {
+            if (productDetailPopup) productDetailPopup.classList.remove('active');
+        });
+    }
 
     window.addEventListener('click', (event) => {
         if (event.target === productDetailPopup) {
@@ -145,20 +183,22 @@ document.addEventListener('DOMContentLoaded', function () {
             const tutorInfo = tutorsData[tutorId];
 
             if (tutorInfo) {
-                popupTutorPhoto.src = tutorInfo.photo;
-                popupTutorName.textContent = tutorInfo.name;
-                popupTutorEducation.textContent = tutorInfo.education;
-                popupTutorTasks.textContent = tutorInfo.tasksCompleted;
-                popupTutorDescription.textContent = tutorInfo.description;
-                selectTutorBtn.setAttribute('onclick', `window.location.href='https://maskos.web.id/${tutorInfo.name.toLowerCase()}'`);
-                tutorDetailPopup.classList.add('active');
+                if (popupTutorPhoto) popupTutorPhoto.src = tutorInfo.photo;
+                if (popupTutorName) popupTutorName.textContent = tutorInfo.name;
+                if (popupTutorEducation) popupTutorEducation.textContent = tutorInfo.education;
+                if (popupTutorTasks) popupTutorTasks.textContent = tutorInfo.tasksCompleted;
+                if (popupTutorDescription) popupTutorDescription.textContent = tutorInfo.description;
+                if (selectTutorBtn) selectTutorBtn.setAttribute('onclick', `window.location.href='https://maskos.web.id/${tutorInfo.name.toLowerCase()}'`);
+                if (tutorDetailPopup) tutorDetailPopup.classList.add('active');
             }
         });
     });
 
-    closeTutorPopupBtn.addEventListener('click', () => {
-        tutorDetailPopup.classList.remove('active');
-    });
+    if (closeTutorPopupBtn) {
+        closeTutorPopupBtn.addEventListener('click', () => {
+            if (tutorDetailPopup) tutorDetailPopup.classList.remove('active');
+        });
+    }
 
     window.addEventListener('click', (event) => {
         if (event.target === tutorDetailPopup) {
@@ -240,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const text = document.getElementById('review-text').value;
 
             if (currentRating === 0) {
-                alert('Mohon berikan rating bintang!');
+                showAlert('Mohon berikan rating bintang!');
                 return;
             }
 
@@ -253,34 +293,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 uniqueId: uniqueId 
             };
 
-            reviewsRef.orderByChild('phone').equalTo(phone).once('value', snapshot => {
-                let existingReview = null;
-                let existingReviewKey = null;
-
-                snapshot.forEach(childSnapshot => {
-                    if (childSnapshot.val().uniqueId === uniqueId) {
-                        existingReview = childSnapshot.val();
-                        existingReviewKey = childSnapshot.key;
-                    }
-                });
-
-                if (existingReview) {
-                    if (confirm('Anda sudah memiliki ulasan. Apakah Anda ingin memperbaruinya?')) {
-                        reviewsRef.child(existingReviewKey).update(reviewData);
-                    } else {
-                        return;
-                    }
+            reviewsRef.push(reviewData, (error) => {
+                if (error) {
+                    showAlert('Gagal mengirim ulasan: ' + error.message);
                 } else {
-                    reviewsRef.push(reviewData);
+                    reviewForm.reset();
+                    currentRating = 0;
+                    ratingStars.querySelectorAll('i').forEach(star => {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    });
+                    showAlert('Ulasan Anda berhasil dikirim!');
+                    if (reviewFormContainer) reviewFormContainer.style.display = 'none';
+                    if (invalidLinkMessage) {
+                        invalidLinkMessage.innerHTML = `<h2 class="section-title">Terima kasih atas ulasan Anda!</h2><p class="section-description">Anda sudah memberikan ulasan untuk pesanan ini. Silakan hubungi admin jika ada kendala.</p>`;
+                        invalidLinkMessage.style.display = 'block';
+                    }
                 }
-            
-                reviewForm.reset();
-                currentRating = 0;
-                ratingStars.querySelectorAll('i').forEach(star => {
-                    star.classList.remove('fas');
-                    star.classList.add('far');
-                });
-                alert('Ulasan Anda berhasil dikirim!');
             });
         });
     }
@@ -302,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (target.classList.contains('delete-review-btn')) {
                         if (confirm('Apakah Anda yakin ingin menghapus ulasan ini?')) {
                             reviewsRef.child(reviewKey).remove();
-                            alert('Ulasan berhasil dihapus.');
+                            showAlert('Ulasan berhasil dihapus.');
                         }
                     } else if (target.classList.contains('edit-review-btn')) {
                         reviewsRef.child(reviewKey).once('value', snapshot => {
@@ -322,15 +351,15 @@ document.addEventListener('DOMContentLoaded', function () {
                                     }
                                 });
                                 reviewsRef.child(reviewKey).remove(); 
-                                alert('Sekarang Anda dapat mengedit ulasan di formulir.');
+                                showAlert('Sekarang Anda dapat mengedit ulasan di formulir.');
                             }
                         });
                     }
                 } else {
-                    alert('Nomor HP tidak cocok. Anda tidak memiliki izin untuk mengelola ulasan ini.');
+                    showAlert('Nomor HP tidak cocok. Anda tidak memiliki izin untuk mengelola ulasan ini.');
                 }
             } else {
-                 alert('Anda tidak memiliki izin untuk mengelola ulasan ini.');
+                 showAlert('Anda tidak memiliki izin untuk mengelola ulasan ini.');
             }
         });
 
@@ -353,11 +382,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateCartCount() {
         const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
         if (totalItems > 0) {
-            cartCount.textContent = totalItems;
-            cartCount.style.display = 'block';
+            if (cartCount) {
+                cartCount.textContent = totalItems;
+                cartCount.style.display = 'block';
+            }
         } else {
-            cartCount.textContent = '0';
-            cartCount.style.display = 'none';
+            if (cartCount) {
+                cartCount.textContent = '0';
+                cartCount.style.display = 'none';
+            }
         }
     }
 
@@ -366,6 +399,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setPopupPosition() {
+        if (!keranjangIcon || !cartPopup) return;
         const iconRect = keranjangIcon.getBoundingClientRect();
         const popupWidth = cartPopup.offsetWidth;
         
@@ -381,6 +415,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- FUNGSI TAMPILAN KERANJANG ---
     function displayCartItems() {
+        if (!cartItemsContainer || !subTotalPriceElement || !discountTotalPriceElement || !totalPriceElement) return;
         cartItemsContainer.innerHTML = '';
         let totalProduk = 0;
         let totalDiskon = 0;
@@ -420,35 +455,38 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Tambahkan Event Listener ke Kontainer Keranjang ---
-    cartItemsContainer.addEventListener('click', function(event) {
-        event.stopPropagation();
-        const target = event.target;
-        
-        if (target.classList.contains('quantity-btn')) {
-            const isMinus = target.classList.contains('minus');
-            const productId = target.closest('.cart-item').dataset.productId;
+    if (cartItemsContainer) {
+        cartItemsContainer.addEventListener('click', function(event) {
+            event.stopPropagation();
+            const target = event.target;
             
-            const itemIndex = cart.findIndex(i => i.id === productId);
+            if (target.classList.contains('quantity-btn')) {
+                const isMinus = target.classList.contains('minus');
+                const productId = target.closest('.cart-item').dataset.productId;
+                
+                const itemIndex = cart.findIndex(i => i.id === productId);
 
-            if (itemIndex > -1) {
-                if (isMinus) {
-                    cart[itemIndex].quantity--;
-                    if (cart[itemIndex].quantity === 0) {
-                        cart.splice(itemIndex, 1);
+                if (itemIndex > -1) {
+                    if (isMinus) {
+                        cart[itemIndex].quantity--;
+                        if (cart[itemIndex].quantity === 0) {
+                            cart.splice(itemIndex, 1);
+                        }
+                    } else {
+                        cart[itemIndex].quantity++;
                     }
-                } else {
-                    cart[itemIndex].quantity++;
+                    displayCartItems();
+                    updateCartCount();
                 }
-                displayCartItems();
-                updateCartCount();
             }
-        }
-    });
+        });
+    }
 
     // --- FUNGSI TAMBAH KE KERANJANG ---
     document.querySelectorAll('.add-to-cart, .add-to-cart-popup').forEach(button => {
         button.addEventListener('click', (event) => {
             const productCard = event.target.closest('.product-card') || document.querySelector(`.product-card[data-product-id="${event.target.getAttribute('data-product-id')}"]`);
+            if (!productCard) return;
             
             const productTitle = productCard.querySelector('.product-title').textContent;
             const productId = productCard.getAttribute('data-product-id');
@@ -476,6 +514,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const startPosition = button.getBoundingClientRect();
             const endPosition = document.getElementById('keranjang').getBoundingClientRect();
+            if (!endPosition) return;
 
             const animatedProduct = document.createElement('div');
             animatedProduct.classList.add('animate-product');
@@ -494,31 +533,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 animatedProduct.remove();
             }, 1000);
 
-            if (button.classList.contains('add-to-cart-popup')) {
+            if (button.classList.contains('add-to-cart-popup') && productDetailPopup) {
                 productDetailPopup.classList.remove('active');
             }
         });
     });
 
     // --- LOGIKA POP-UP KERANJANG ---
-    keranjangIcon.addEventListener('click', (event) => {
-        event.stopPropagation();
-        
-        const isActive = cartPopup.classList.contains('active');
-        cartPopup.classList.toggle('active');
+    if (keranjangIcon && cartPopup) {
+        keranjangIcon.addEventListener('click', (event) => {
+            event.stopPropagation();
+            
+            const isActive = cartPopup.classList.contains('active');
+            cartPopup.classList.toggle('active');
 
-        if (!isActive) {
-            setPopupPosition();
-            displayCartItems();
-        }
-    });
+            if (!isActive) {
+                setPopupPosition();
+                displayCartItems();
+            }
+        });
+    }
 
-    closeCartBtn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        cartPopup.classList.remove('active');
-    });
+    if (closeCartBtn && cartPopup) {
+        closeCartBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            cartPopup.classList.remove('active');
+        });
+    }
 
     document.addEventListener('click', (event) => {
+        if (!cartPopup || !keranjangIcon || !cartCount) return;
         const isClickInsidePopup = cartPopup.contains(event.target);
         const isClickOnIcon = keranjangIcon.contains(event.target);
         const isClickOnCartCount = cartCount.contains(event.target);
@@ -528,12 +572,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    document.getElementById('checkout-btn').addEventListener('click', () => {
-        alert('Proses checkout dimulai!');
-    });
+    const checkoutBtn = document.getElementById('checkout-btn');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            showAlert('Proses checkout dimulai!');
+        });
+    }
 
     window.addEventListener('resize', () => {
-        if (cartPopup.classList.contains('active')) {
+        if (cartPopup && cartPopup.classList.contains('active')) {
             setPopupPosition();
         }
     });
