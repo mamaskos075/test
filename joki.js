@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
     // === Konfigurasi Firebase ===
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY", 
-      authDomain: "YOUR_AUTH_DOMAIN",
-      databaseURL: "https://review-maskos-default-rtdb.asia-southeast1.firebasedatabase.app/",
-      projectId: "review-maskos-default-rtdb",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        databaseURL: "https://review-maskos-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId: "review-maskos-default-rtdb",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
     };
 
     if (!firebase.apps.length) {
@@ -23,13 +23,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let cartPopup = document.getElementById('cart-popup');
     let cartCount = document.getElementById('cart-count');
     const cartItemsContainer = document.getElementById('cart-items');
-    
-    // Elemen total keranjang
+
     const subTotalPriceElement = document.getElementById('sub-total-price');
     const discountTotalPriceElement = document.getElementById('discount-total-price');
     const totalPriceElement = document.getElementById('total-price');
 
-    // Elemen pop-up detail produk
     const productDetailPopup = document.getElementById('product-detail-popup');
     const closePopupBtn = document.querySelector('.close-popup-btn');
     const popupProductTitle = document.getElementById('popup-product-title');
@@ -37,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const popupProductPrice = document.getElementById('popup-product-price');
     const addToCartPopupBtn = document.querySelector('.add-to-cart-popup');
 
-    // Elemen pop-up detail tutor
     const tutorDetailPopup = document.getElementById('tutor-detail-popup');
     const closeTutorPopupBtn = document.querySelector('.close-popup-btn-tutor');
     const popupTutorPhoto = document.getElementById('popup-tutor-photo');
@@ -49,7 +46,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let closeCartBtn = document.createElement('i');
     closeCartBtn.classList.add('fas', 'fa-times', 'close-cart-btn');
-    document.querySelector('.cart-header').appendChild(closeCartBtn);
+    if (document.querySelector('.cart-header')) {
+        document.querySelector('.cart-header').appendChild(closeCartBtn);
+    }
 
     let cart = [];
 
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             education: 'Sarjana Teknik Informatika, Universitas Indonesia',
             tasksCompleted: '350+',
             description: 'Zafina adalah tutor yang sangat detail dan berdedikasi tinggi. Dengan pengalaman lebih dari 5 tahun di bidang IT, ia jago dalam membantu mahasiswa di mata kuliah pemrograman, algoritma, dan struktur data.',
-            photo: 'https://via.placeholder.com/300' 
+            photo: 'https://via.placeholder.com/300'
         },
         '2': {
             name: 'Rizal',
@@ -77,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
             photo: 'https://via.placeholder.com/300'
         }
     };
-    
+
     // --- Elemen Ulasan ---
     const reviewFormContainer = document.querySelector('.review-form-section');
     const reviewForm = document.getElementById('review-form');
@@ -92,7 +91,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirmNoBtn = document.getElementById('confirm-no');
     let currentRating = 0;
 
-    // Fungsi untuk notifikasi dan konfirmasi kustom
+    // === FUNGSI & EVENT LISTENERS ===
+
+    // --- Fungsi Notifikasi & Konfirmasi Kustom ---
     function showAlert(message) {
         if (!customAlert || !customAlertMessage) return;
         customAlertMessage.textContent = message;
@@ -139,10 +140,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (uniqueId) {
         reviewsRef.orderByChild('uniqueId').equalTo(uniqueId).once('value', async (snapshot) => {
             if (snapshot.exists()) {
-                const userReview = Object.values(snapshot.val())[0]; 
+                const userReview = Object.values(snapshot.val())[0];
                 const userReviewKey = Object.keys(snapshot.val())[0];
                 const confirmed = await showConfirm('Anda sudah memberikan ulasan sebelumnya. Apakah Anda ingin mengubah ulasan Anda?');
-                
+
                 if (confirmed) {
                     if (reviewFormContainer) reviewFormContainer.style.display = 'block';
                     if (reviewForm) {
@@ -164,7 +165,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 } else {
                     if (reviewFormContainer) reviewFormContainer.style.display = 'none';
-                    showAlert('Anda tidak dapat mengubah ulasan. Silakan hubungi admin untuk bantuan.');
+                    // Logika untuk menampilkan pesan "Ulasan sudah dikirim"
+                    const invalidLinkMessage = document.querySelector('.invalid-link-message');
+                    if (invalidLinkMessage) {
+                        invalidLinkMessage.innerHTML = `
+                            <h2 class="section-title">Ulasan Sudah Terkirim</h2>
+                            <p class="section-description">Terima kasih atas ulasan Anda. Jika ada kendala, silakan hubungi admin.</p>
+                            <a href="https://wa.me/nomorwhatsappmu?text=Halo%20admin,%20saya%20ingin%20mengubah%20ulasan%20saya." class="whatsapp-btn">
+                                <i class="fab fa-whatsapp"></i> Hubungi Admin
+                            </a>
+                        `;
+                        invalidLinkMessage.style.display = 'block';
+                    }
+                    if (reviewsList) reviewsList.style.display = 'none';
                 }
             } else {
                 if (reviewFormContainer) reviewFormContainer.style.display = 'block';
@@ -178,8 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (reviewFormContainer) reviewFormContainer.style.display = 'none';
     }
 
-    // === FUNGSI & EVENT LISTENERS ===
-    
+
     // --- Logika Utama untuk Menampilkan Ulasan Publik ---
     function displayReviews(reviewsData) {
         if (!reviewsList) return;
@@ -188,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ...reviewsData[key],
             key
         }));
-        
+
         if (reviewsArray.length === 0) {
             reviewsList.innerHTML = `<p style="text-align: center; color: #999; font-size: 1.4rem; min-width: 100%;">Belum ada ulasan. Jadilah yang pertama!</p>`;
         } else {
@@ -216,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
-    
+
     reviewsRef.on('value', (snapshot) => {
         const reviewsData = snapshot.val();
         displayReviews(reviewsData);
@@ -258,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 rating: currentRating,
                 text,
                 date: new Date().toISOString(),
-                uniqueId: uniqueId 
+                uniqueId: uniqueId
             };
 
             reviewsRef.push(reviewData, (error) => {
@@ -288,10 +300,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const reviewKey = reviewItem.dataset.key;
             const reviewPhone = reviewItem.dataset.phone;
             const reviewUniqueId = reviewItem.dataset.uniqueId;
-            
+
             if (uniqueId && uniqueId === reviewUniqueId) {
-                 const loggedInPhone = prompt('Untuk mengelola ulasan, masukkan Nomor HP Anda:');
-                 if (loggedInPhone === reviewPhone) {
+                const loggedInPhone = prompt('Untuk mengelola ulasan, masukkan Nomor HP Anda:');
+                if (loggedInPhone === reviewPhone) {
                     if (target.classList.contains('delete-review-btn')) {
                         const confirmed = await showConfirm('Apakah Anda yakin ingin menghapus ulasan ini?');
                         if (confirmed) {
@@ -315,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         star.classList.add('far');
                                     }
                                 });
-                                reviewsRef.child(reviewKey).remove(); 
+                                reviewsRef.child(reviewKey).remove();
                                 showAlert('Sekarang Anda dapat mengedit ulasan di formulir.');
                             }
                         });
@@ -324,24 +336,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     showAlert('Nomor HP tidak cocok. Anda tidak memiliki izin untuk mengelola ulasan ini.');
                 }
             } else {
-                 showAlert('Anda tidak memiliki izin untuk mengelola ulasan ini.');
+                showAlert('Anda tidak memiliki izin untuk mengelola ulasan ini.');
             }
         });
         reviewsList.addEventListener('mouseover', (event) => {
             const reviewItem = event.target.closest('.review-item');
             if (reviewItem && uniqueId && uniqueId === reviewItem.dataset.uniqueId) {
-                 reviewItem.querySelector('.review-actions').style.display = 'block';
+                const actions = reviewItem.querySelector('.review-actions');
+                if (actions) {
+                    actions.style.display = 'block';
+                }
             }
         });
         reviewsList.addEventListener('mouseout', (event) => {
             const reviewItem = event.target.closest('.review-item');
             if (reviewItem) {
-                reviewItem.querySelector('.review-actions').style.display = 'none';
+                const actions = reviewItem.querySelector('.review-actions');
+                if (actions) {
+                    actions.style.display = 'none';
+                }
             }
         });
     }
 
-    // --- FUNGSI BANTUAN ---
+    // --- FUNGSI BANTUAN KERANJANG ---
     function updateCartCount() {
         const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
         if (totalItems > 0) {
@@ -365,9 +383,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!keranjangIcon || !cartPopup) return;
         const iconRect = keranjangIcon.getBoundingClientRect();
         const popupWidth = cartPopup.offsetWidth;
-        
+
         let leftPos = iconRect.right - popupWidth;
-        
+
         if (leftPos < 10) {
             leftPos = 10;
         }
@@ -405,12 +423,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                 `;
                 cartItemsContainer.appendChild(cartItem);
-                
+
                 totalProduk += itemTotal;
                 totalDiskon += (item.originalPrice - item.price) * item.quantity;
             });
         }
-        
+
         subTotalPriceElement.textContent = formatCurrency(totalProduk);
         discountTotalPriceElement.textContent = formatCurrency(totalDiskon);
         totalPriceElement.textContent = formatCurrency(totalProduk);
@@ -419,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cartItemsContainer.addEventListener('click', function(event) {
             event.stopPropagation();
             const target = event.target;
-            
+
             if (target.classList.contains('quantity-btn')) {
                 const isMinus = target.classList.contains('minus');
                 const productId = target.closest('.cart-item').dataset.productId;
@@ -445,16 +463,16 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', (event) => {
             const productCard = event.target.closest('.product-card') || document.querySelector(`.product-card[data-product-id="${event.target.getAttribute('data-product-id')}"]`);
             if (!productCard) return;
-            
+
             const productTitle = productCard.querySelector('.product-title').textContent;
             const productId = productCard.getAttribute('data-product-id');
             const productPrice = parseFloat(productCard.getAttribute('data-discount-price'));
-            
+
             const originalPriceElement = productCard.querySelector('.original-price');
             const originalPrice = originalPriceElement ? parseFloat(originalPriceElement.textContent.replace('Rp', '').replace(/\./g, '')) : productPrice;
-            
+
             const existingItem = cart.find(item => item.id === productId);
-            
+
             if (existingItem) {
                 existingItem.quantity++;
             } else {
@@ -467,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
                 cart.push(product);
             }
-            
+
             updateCartCount();
 
             const startPosition = button.getBoundingClientRect();
@@ -500,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (keranjangIcon && cartPopup) {
         keranjangIcon.addEventListener('click', (event) => {
             event.stopPropagation();
-            
+
             const isActive = cartPopup.classList.contains('active');
             cartPopup.classList.toggle('active');
 
@@ -523,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isClickInsidePopup = cartPopup.contains(event.target);
         const isClickOnIcon = keranjangIcon.contains(event.target);
         const isClickOnCartCount = cartCount.contains(event.target);
-        
+
         if (!isClickInsidePopup && !isClickOnIcon && !isClickOnCartCount && cartPopup.classList.contains('active')) {
             cartPopup.classList.remove('active');
         }
@@ -541,4 +559,67 @@ document.addEventListener('DOMContentLoaded', function () {
             setPopupPosition();
         }
     });
+
+    // --- FUNGSI TOMBOL DETAIL & HAMBURGER ---
+
+    // Fungsi untuk membuka pop-up detail produk
+    document.querySelectorAll('.view-details').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const productCard = event.target.closest('.product-card');
+            const productId = productCard.getAttribute('data-product-id');
+            const productTitle = productCard.querySelector('.product-title').textContent;
+            const productDescription = productCard.querySelector('.product-description').textContent;
+            const productPrice = productCard.querySelector('.discount-price').textContent;
+
+            popupProductTitle.textContent = productTitle;
+            popupProductDescription.textContent = productDescription;
+            popupProductPrice.textContent = productPrice;
+            addToCartPopupBtn.setAttribute('data-product-id', productId);
+
+            productDetailPopup.classList.add('active');
+        });
+    });
+
+    // Fungsi untuk menutup pop-up detail produk
+    if (closePopupBtn) {
+        closePopupBtn.addEventListener('click', () => {
+            productDetailPopup.classList.remove('active');
+        });
+    }
+
+    // Fungsi untuk membuka pop-up detail tutor
+    document.querySelectorAll('.view-tutor-details').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const tutorCard = event.target.closest('.tutor-card');
+            const tutorId = tutorCard.getAttribute('data-tutor-id');
+            const tutor = tutorsData[tutorId];
+
+            if (tutor) {
+                popupTutorPhoto.src = tutor.photo;
+                popupTutorName.textContent = tutor.name;
+                popupTutorEducation.textContent = `Pendidikan: ${tutor.education}`;
+                popupTutorTasks.textContent = `Tugas Selesai: ${tutor.tasksCompleted}`;
+                popupTutorDescription.textContent = tutor.description;
+                selectTutorBtn.setAttribute('data-tutor-id', tutorId);
+                tutorDetailPopup.classList.add('active');
+            }
+        });
+    });
+
+    // Fungsi untuk menutup pop-up detail tutor
+    if (closeTutorPopupBtn) {
+        closeTutorPopupBtn.addEventListener('click', () => {
+            tutorDetailPopup.classList.remove('active');
+        });
+    }
+
+    // Fungsionalitas Hamburger Menu
+    if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', () => {
+            if (navbar) {
+                navbar.classList.toggle('active');
+            }
+        });
+    }
+
 });
