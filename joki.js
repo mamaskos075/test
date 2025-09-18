@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
       databaseURL: "https://review-maskos-default-rtdb.asia-southeast1.firebasedatabase.app/",
       projectId: "review-maskos-default-rtdb",
       storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      messagingSenderId: "YOUR_MESSaging_SENDER_ID",
       appId: "YOUR_APP_ID"
     };
 
@@ -87,6 +87,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const customAlert = document.getElementById('custom-alert');
     const customAlertMessage = document.getElementById('custom-alert-message');
     const customAlertCloseBtn = document.getElementById('custom-alert-close');
+    const customConfirm = document.getElementById('custom-confirm');
+    const customConfirmMessage = document.getElementById('custom-confirm-message');
+    const confirmYesBtn = document.getElementById('confirm-yes');
+    const confirmNoBtn = document.getElementById('confirm-no');
     let currentRating = 0;
 
     // Fungsi untuk menampilkan notifikasi kustom
@@ -96,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         customAlert.style.display = 'flex';
         setTimeout(() => {
             customAlert.style.display = 'none';
-        }, 3000); // Notifikasi akan hilang setelah 3 detik
+        }, 3000);
     }
 
     if (customAlertCloseBtn) {
@@ -105,6 +109,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Fungsi untuk menampilkan konfirmasi kustom
+    function showConfirm(message) {
+        return new Promise((resolve) => {
+            if (!customConfirm || !customConfirmMessage || !confirmYesBtn || !confirmNoBtn) {
+                return resolve(window.confirm(message));
+            }
+            customConfirmMessage.textContent = message;
+            customConfirm.style.display = 'flex';
+
+            const onConfirm = () => {
+                customConfirm.style.display = 'none';
+                confirmYesBtn.removeEventListener('click', onConfirm);
+                confirmNoBtn.removeEventListener('click', onCancel);
+                resolve(true);
+            };
+
+            const onCancel = () => {
+                customConfirm.style.display = 'none';
+                confirmYesBtn.removeEventListener('click', onConfirm);
+                confirmNoBtn.removeEventListener('click', onCancel);
+                resolve(false);
+            };
+
+            confirmYesBtn.addEventListener('click', onConfirm);
+            confirmNoBtn.addEventListener('click', onCancel);
+        });
+    }
+    
     // Logika untuk otentikasi link
     const urlParams = new URLSearchParams(window.location.search);
     const uniqueId = urlParams.get('id');
@@ -246,7 +278,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // Mengambil ulasan dari Firebase secara real-time dan menampilkannya
+    // MENGAMBIL SEMUA ULASAN SECARA PUBLIK (PERBAIKAN UTAMA)
+    // Logika ini berjalan di setiap halaman dimuat, terlepas dari URL
     reviewsRef.on('value', (snapshot) => {
         const reviewsData = snapshot.val();
         displayReviews(reviewsData);
@@ -316,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Mengelola tombol edit dan hapus
     if (reviewsList) {
-        reviewsList.addEventListener('click', (event) => {
+        reviewsList.addEventListener('click', async (event) => {
             const target = event.target;
             const reviewItem = target.closest('.review-item');
             if (!reviewItem) return;
@@ -329,7 +362,8 @@ document.addEventListener('DOMContentLoaded', function () {
                  const loggedInPhone = prompt('Untuk mengelola ulasan, masukkan Nomor HP Anda:');
                  if (loggedInPhone === reviewPhone) {
                     if (target.classList.contains('delete-review-btn')) {
-                        if (confirm('Apakah Anda yakin ingin menghapus ulasan ini?')) {
+                        const confirmed = await showConfirm('Apakah Anda yakin ingin menghapus ulasan ini?');
+                        if (confirmed) {
                             reviewsRef.child(reviewKey).remove();
                             showAlert('Ulasan berhasil dihapus.');
                         }
