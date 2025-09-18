@@ -78,9 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
     
-    // --- Elemen Ulasan Khusus Admin ---
-    const reviewFormContainer = document.getElementById('review-form-container');
-    const invalidLinkMessage = document.getElementById('invalid-link-message');
+    // --- Elemen Ulasan ---
+    const reviewFormContainer = document.querySelector('.review-form-section');
     const reviewForm = document.getElementById('review-form');
     const ratingStars = document.getElementById('rating-stars');
     const reviewsList = document.getElementById('reviews-list');
@@ -93,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirmNoBtn = document.getElementById('confirm-no');
     let currentRating = 0;
 
-    // Fungsi untuk menampilkan notifikasi kustom
+    // Fungsi untuk notifikasi dan konfirmasi kustom
     function showAlert(message) {
         if (!customAlert || !customAlertMessage) return;
         customAlertMessage.textContent = message;
@@ -102,14 +101,11 @@ document.addEventListener('DOMContentLoaded', function () {
             customAlert.style.display = 'none';
         }, 3000);
     }
-
     if (customAlertCloseBtn) {
         customAlertCloseBtn.addEventListener('click', () => {
             customAlert.style.display = 'none';
         });
     }
-
-    // Fungsi untuk menampilkan konfirmasi kustom
     function showConfirm(message) {
         return new Promise((resolve) => {
             if (!customConfirm || !customConfirmMessage || !confirmYesBtn || !confirmNoBtn) {
@@ -117,141 +113,84 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             customConfirmMessage.textContent = message;
             customConfirm.style.display = 'flex';
-
             const onConfirm = () => {
                 customConfirm.style.display = 'none';
                 confirmYesBtn.removeEventListener('click', onConfirm);
                 confirmNoBtn.removeEventListener('click', onCancel);
                 resolve(true);
             };
-
             const onCancel = () => {
                 customConfirm.style.display = 'none';
                 confirmYesBtn.removeEventListener('click', onConfirm);
                 confirmNoBtn.removeEventListener('click', onCancel);
                 resolve(false);
             };
-
             confirmYesBtn.addEventListener('click', onConfirm);
             confirmNoBtn.addEventListener('click', onCancel);
         });
     }
-    
-    // Logika untuk otentikasi link
+
+    // Mendapatkan URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     const uniqueId = urlParams.get('id');
+    const reviewSection = document.getElementById('review');
 
-    // Menampilkan pesan atau formulir berdasarkan keberadaan ulasan dan ID unik
+    // === Logika Utama untuk Tampilan Formulir dan Pesan ===
     if (uniqueId) {
-        reviewsRef.orderByChild('uniqueId').equalTo(uniqueId).once('value', snapshot => {
+        reviewsRef.orderByChild('uniqueId').equalTo(uniqueId).once('value', async (snapshot) => {
             if (snapshot.exists()) {
-                if (reviewFormContainer) reviewFormContainer.style.display = 'none';
-                if (invalidLinkMessage) {
-                    invalidLinkMessage.innerHTML = `<h2 class="section-title">Terima kasih atas ulasan Anda!</h2><p class="section-description">Anda sudah memberikan ulasan untuk pesanan ini. Silakan hubungi admin jika ada kendala.</p>`;
-                    invalidLinkMessage.style.display = 'block';
+                const userReview = Object.values(snapshot.val())[0]; 
+                const userReviewKey = Object.keys(snapshot.val())[0];
+                const confirmed = await showConfirm('Anda sudah memberikan ulasan sebelumnya. Apakah Anda ingin mengubah ulasan Anda?');
+                
+                if (confirmed) {
+                    if (reviewFormContainer) reviewFormContainer.style.display = 'block';
+                    if (reviewForm) {
+                        reviewForm.style.display = 'block';
+                        document.getElementById('review-name').value = userReview.name;
+                        document.getElementById('review-phone').value = userReview.phone;
+                        document.getElementById('review-text').value = userReview.text;
+                        currentRating = userReview.rating;
+                        ratingStars.querySelectorAll('i').forEach(star => {
+                            if (parseInt(star.dataset.rating) <= currentRating) {
+                                star.classList.remove('far');
+                                star.classList.add('fas');
+                            } else {
+                                star.classList.remove('fas');
+                                star.classList.add('far');
+                            }
+                        });
+                        reviewsRef.child(userReviewKey).remove();
+                    }
+                } else {
+                    if (reviewFormContainer) reviewFormContainer.style.display = 'none';
+                    showAlert('Anda tidak dapat mengubah ulasan. Silakan hubungi admin untuk bantuan.');
                 }
             } else {
                 if (reviewFormContainer) reviewFormContainer.style.display = 'block';
-                if (invalidLinkMessage) invalidLinkMessage.style.display = 'none';
+                if (reviewForm) reviewForm.style.display = 'block';
+            }
+            if (reviewSection) {
+                reviewSection.scrollIntoView({ behavior: 'smooth' });
             }
         });
     } else {
         if (reviewFormContainer) reviewFormContainer.style.display = 'none';
-        if (invalidLinkMessage) {
-            invalidLinkMessage.innerHTML = `<h2 class="section-title">Berikan Ulasan Terbaikmu!</h2><p class="section-description">Untuk memberikan ulasan, Anda harus memiliki tautan khusus dari admin.</p>`;
-            invalidLinkMessage.style.display = 'block';
-        }
     }
 
     // === FUNGSI & EVENT LISTENERS ===
     
-    // --- LOGIKA HAMBURGER BUTTON ---
-    if (hamburgerBtn && navbar) {
-        hamburgerBtn.addEventListener('click', () => {
-            navbar.classList.toggle('active');
-            if (cartPopup) cartPopup.classList.remove('active');
-        });
-    }
-
-    // --- LOGIKA POP-UP DETAIL PRODUK ---
-    document.querySelectorAll('.view-details').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const productCard = event.target.closest('.product-card');
-            const productTitle = productCard.querySelector('.product-title').textContent;
-            const productDescription = productCard.querySelector('.product-description').textContent;
-            const discountPrice = productCard.querySelector('.discount-price').textContent;
-            
-            if (popupProductTitle) popupProductTitle.textContent = productTitle;
-            if (popupProductDescription) popupProductDescription.textContent = productDescription;
-            if (popupProductPrice) popupProductPrice.textContent = `${discountPrice} (Harga DP)`;
-
-            if (addToCartPopupBtn) {
-                addToCartPopupBtn.setAttribute('data-product-id', productCard.getAttribute('data-product-id'));
-                addToCartPopupBtn.setAttribute('data-original-price', productCard.getAttribute('data-price'));
-                addToCartPopupBtn.setAttribute('data-discount-price', productCard.getAttribute('data-discount-price'));
-            }
-
-            if (productDetailPopup) productDetailPopup.classList.add('active');
-        });
-    });
-
-    if (closePopupBtn) {
-        closePopupBtn.addEventListener('click', () => {
-            if (productDetailPopup) productDetailPopup.classList.remove('active');
-        });
-    }
-
-    window.addEventListener('click', (event) => {
-        if (event.target === productDetailPopup) {
-            productDetailPopup.classList.remove('active');
-        }
-    });
-
-    // --- LOGIKA POP-UP DETAIL TUTOR ---
-    document.querySelectorAll('.view-tutor-details').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const tutorCard = event.target.closest('.tutor-card');
-            const tutorId = tutorCard.getAttribute('data-tutor-id');
-            const tutorInfo = tutorsData[tutorId];
-
-            if (tutorInfo) {
-                if (popupTutorPhoto) popupTutorPhoto.src = tutorInfo.photo;
-                if (popupTutorName) popupTutorName.textContent = tutorInfo.name;
-                if (popupTutorEducation) popupTutorEducation.textContent = tutorInfo.education;
-                if (popupTutorTasks) popupTutorTasks.textContent = tutorInfo.tasksCompleted;
-                if (popupTutorDescription) popupTutorDescription.textContent = tutorInfo.description;
-                if (selectTutorBtn) selectTutorBtn.setAttribute('onclick', `window.location.href='https://maskos.web.id/${tutorInfo.name.toLowerCase()}'`);
-                if (tutorDetailPopup) tutorDetailPopup.classList.add('active');
-            }
-        });
-    });
-
-    if (closeTutorPopupBtn) {
-        closeTutorPopupBtn.addEventListener('click', () => {
-            if (tutorDetailPopup) tutorDetailPopup.classList.remove('active');
-        });
-    }
-
-    window.addEventListener('click', (event) => {
-        if (event.target === tutorDetailPopup) {
-            tutorDetailPopup.classList.remove('active');
-        }
-    });
-
-    // --- LOGIKA RATING & ULASAN DENGAN FIREBASE ---
-    
-    // Fungsi untuk menampilkan ulasan
+    // --- Logika Utama untuk Menampilkan Ulasan Publik ---
     function displayReviews(reviewsData) {
         if (!reviewsList) return;
         reviewsList.innerHTML = '';
-        
         const reviewsArray = Object.keys(reviewsData || {}).map(key => ({
             ...reviewsData[key],
             key
         }));
         
         if (reviewsArray.length === 0) {
-            reviewsList.innerHTML = `<p style="text-align: center; color: #999; font-size: 1.4rem;">Belum ada ulasan. Jadilah yang pertama!</p>`;
+            reviewsList.innerHTML = `<p style="text-align: center; color: #999; font-size: 1.4rem; min-width: 100%;">Belum ada ulasan. Jadilah yang pertama!</p>`;
         } else {
             reviewsArray.forEach(review => {
                 const reviewItem = document.createElement('div');
@@ -278,15 +217,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // BAGIAN PENTING UNTUK MENAMPILKAN ULASAN PUBLIK
-    // Listener ini akan mengambil semua ulasan dan menampilkannya saat halaman dimuat, 
-    // terlepas dari apakah URL memiliki parameter 'id' atau tidak.
     reviewsRef.on('value', (snapshot) => {
         const reviewsData = snapshot.val();
         displayReviews(reviewsData);
     });
 
-    // Mengatur rating bintang saat diklik
     if (ratingStars) {
         ratingStars.addEventListener('click', (event) => {
             const target = event.target;
@@ -305,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Mengirim formulir ulasan ke Firebase
     if (reviewForm) {
         reviewForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -339,16 +273,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                     showAlert('Ulasan Anda berhasil dikirim!');
                     if (reviewFormContainer) reviewFormContainer.style.display = 'none';
-                    if (invalidLinkMessage) {
-                        invalidLinkMessage.innerHTML = `<h2 class="section-title">Terima kasih atas ulasan Anda!</h2><p class="section-description">Anda sudah memberikan ulasan untuk pesanan ini. Silakan hubungi admin jika ada kendala.</p>`;
-                        invalidLinkMessage.style.display = 'block';
-                    }
                 }
             });
         });
     }
 
-    // Mengelola tombol edit dan hapus
+    // --- LOGIKA EDIT & HAPUS ULASAN ---
     if (reviewsList) {
         reviewsList.addEventListener('click', async (event) => {
             const target = event.target;
@@ -397,14 +327,12 @@ document.addEventListener('DOMContentLoaded', function () {
                  showAlert('Anda tidak memiliki izin untuk mengelola ulasan ini.');
             }
         });
-
         reviewsList.addEventListener('mouseover', (event) => {
             const reviewItem = event.target.closest('.review-item');
             if (reviewItem && uniqueId && uniqueId === reviewItem.dataset.uniqueId) {
                  reviewItem.querySelector('.review-actions').style.display = 'block';
             }
         });
-
         reviewsList.addEventListener('mouseout', (event) => {
             const reviewItem = event.target.closest('.review-item');
             if (reviewItem) {
@@ -448,7 +376,6 @@ document.addEventListener('DOMContentLoaded', function () {
         cartPopup.style.top = `${iconRect.bottom + 10}px`;
     }
 
-    // --- FUNGSI TAMPILAN KERANJANG ---
     function displayCartItems() {
         if (!cartItemsContainer || !subTotalPriceElement || !discountTotalPriceElement || !totalPriceElement) return;
         cartItemsContainer.innerHTML = '';
@@ -488,8 +415,6 @@ document.addEventListener('DOMContentLoaded', function () {
         discountTotalPriceElement.textContent = formatCurrency(totalDiskon);
         totalPriceElement.textContent = formatCurrency(totalProduk);
     }
-
-    // --- Tambahkan Event Listener ke Kontainer Keranjang ---
     if (cartItemsContainer) {
         cartItemsContainer.addEventListener('click', function(event) {
             event.stopPropagation();
@@ -498,7 +423,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (target.classList.contains('quantity-btn')) {
                 const isMinus = target.classList.contains('minus');
                 const productId = target.closest('.cart-item').dataset.productId;
-                
                 const itemIndex = cart.findIndex(i => i.id === productId);
 
                 if (itemIndex > -1) {
@@ -517,7 +441,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- FUNGSI TAMBAH KE KERANJANG ---
     document.querySelectorAll('.add-to-cart, .add-to-cart-popup').forEach(button => {
         button.addEventListener('click', (event) => {
             const productCard = event.target.closest('.product-card') || document.querySelector(`.product-card[data-product-id="${event.target.getAttribute('data-product-id')}"]`);
@@ -574,7 +497,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // --- LOGIKA POP-UP KERANJANG ---
     if (keranjangIcon && cartPopup) {
         keranjangIcon.addEventListener('click', (event) => {
             event.stopPropagation();
