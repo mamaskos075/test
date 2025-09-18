@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // --- Elemen Ulasan ---
-    const reviewFormContainer = document.querySelector('.review-form-section');
+    const reviewFormContainer = document.querySelector('.review-form-container');
     const reviewForm = document.getElementById('review-form');
     const ratingStars = document.getElementById('rating-stars');
     const reviewsList = document.getElementById('reviews-list');
@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const customConfirmMessage = document.getElementById('custom-confirm-message');
     const confirmYesBtn = document.getElementById('confirm-yes');
     const confirmNoBtn = document.getElementById('confirm-no');
+    const invalidLinkMessage = document.getElementById('invalid-link-message');
     let currentRating = 0;
 
     // === FUNGSI & EVENT LISTENERS ===
@@ -138,6 +139,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // === Logika Utama untuk Tampilan Formulir dan Pesan ===
     if (uniqueId) {
+        if (reviewFormContainer) reviewFormContainer.style.display = 'block';
+        if (invalidLinkMessage) invalidLinkMessage.style.display = 'none';
+
         reviewsRef.orderByChild('uniqueId').equalTo(uniqueId).once('value', async (snapshot) => {
             if (snapshot.exists()) {
                 const userReview = Object.values(snapshot.val())[0];
@@ -147,7 +151,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (confirmed) {
                     if (reviewFormContainer) reviewFormContainer.style.display = 'block';
                     if (reviewForm) {
-                        reviewForm.style.display = 'block';
                         document.getElementById('review-name').value = userReview.name;
                         document.getElementById('review-phone').value = userReview.phone;
                         document.getElementById('review-text').value = userReview.text;
@@ -165,23 +168,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 } else {
                     if (reviewFormContainer) reviewFormContainer.style.display = 'none';
-                    // Logika untuk menampilkan pesan "Ulasan sudah dikirim"
-                    const invalidLinkMessage = document.querySelector('.invalid-link-message');
                     if (invalidLinkMessage) {
                         invalidLinkMessage.innerHTML = `
                             <h2 class="section-title">Ulasan Sudah Terkirim</h2>
                             <p class="section-description">Terima kasih atas ulasan Anda. Jika ada kendala, silakan hubungi admin.</p>
-                            <a href="https://wa.me/nomorwhatsappmu?text=Halo%20admin,%20saya%20ingin%20mengubah%20ulasan%20saya." class="whatsapp-btn">
+                            <a href="https://wa.me/NOMOR_HP_ANDA?text=Halo%20admin%20Maskos,%20saya%20ingin%20mengubah%20ulasan%20saya." target="_blank" class="whatsapp-btn">
                                 <i class="fab fa-whatsapp"></i> Hubungi Admin
                             </a>
                         `;
                         invalidLinkMessage.style.display = 'block';
                     }
-                    if (reviewsList) reviewsList.style.display = 'none';
                 }
             } else {
                 if (reviewFormContainer) reviewFormContainer.style.display = 'block';
-                if (reviewForm) reviewForm.style.display = 'block';
             }
             if (reviewSection) {
                 reviewSection.scrollIntoView({ behavior: 'smooth' });
@@ -189,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     } else {
         if (reviewFormContainer) reviewFormContainer.style.display = 'none';
+        if (invalidLinkMessage) invalidLinkMessage.style.display = 'block';
     }
 
 
@@ -285,6 +285,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                     showAlert('Ulasan Anda berhasil dikirim!');
                     if (reviewFormContainer) reviewFormContainer.style.display = 'none';
+                    if (invalidLinkMessage) {
+                        invalidLinkMessage.innerHTML = `
+                            <h2 class="section-title">Ulasan Sudah Terkirim</h2>
+                            <p class="section-description">Terima kasih atas ulasan Anda. Jika ada kendala, silakan hubungi admin.</p>
+                            <a href="https://wa.me/NOMOR_HP_ANDA?text=Halo%20admin%20Maskos,%20saya%20ingin%20mengubah%20ulasan%20saya." target="_blank" class="whatsapp-btn">
+                                <i class="fab fa-whatsapp"></i> Hubungi Admin
+                            </a>
+                        `;
+                        invalidLinkMessage.style.display = 'block';
+                    }
                 }
             });
         });
@@ -598,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 popupTutorPhoto.src = tutor.photo;
                 popupTutorName.textContent = tutor.name;
                 popupTutorEducation.textContent = `Pendidikan: ${tutor.education}`;
-                popupTutorTasks.textContent = `Tugas Selesai: ${tutor.tasksCompleted}`;
+                popupTutorTasks.textContent = `Tugas Terselesaikan: ${tutor.tasksCompleted}`;
                 popupTutorDescription.textContent = tutor.description;
                 selectTutorBtn.setAttribute('data-tutor-id', tutorId);
                 tutorDetailPopup.classList.add('active');
