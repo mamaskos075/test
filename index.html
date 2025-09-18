@@ -182,49 +182,6 @@
             <button class="view-tutor-details">Selengkapnya</button>
         </div>
     </div>
-</section>
-       
-      <div class="review-form-container" id="review-form-container">
-    <h3 class="form-title">Berikan Ulasan Anda</h3>
-    <form id="review-form">
-        <div class="form-group">
-            <label for="review-name">Nama Anda</label>
-            <input type="text" id="review-name" required>
-        </div>
-        <div class="form-group">
-            <label for="review-phone">Nomor HP</label>
-            <input type="tel" id="review-phone" pattern="[0-9]{9,15}" required>
-            <small>Gunakan nomor HP untuk mengelola ulasan Anda.</small>
-        </div>
-        <div class="form-group">
-            <label for="review-rating">Rating</label>
-            <div class="rating-stars" id="rating-stars">
-                <i class="far fa-star" data-rating="1"></i>
-                <i class="far fa-star" data-rating="2"></i>
-                <i class="far fa-star" data-rating="3"></i>
-                <i class="far fa-star" data-rating="4"></i>
-                <i class="far fa-star" data-rating="5"></i>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="review-text">Ulasan Anda</label>
-            <textarea id="review-text" rows="5" required></textarea>
-        </div>
-        <button type="submit" class="submit-review-btn">Kirim Ulasan</button>
-    </form>
-</div>
-<div class="invalid-link-message" id="invalid-link-message" style="display: none;">
-    <p>List ulasan</p>
-</div>
-
-    <section class="review" id="review">
-    <h2 class="section-title">Ulasan Pelanggan</h2>
-    <div class="review-list-container">
-        <div id="reviews-list">
-            </div>
-    </div>
-    </section>
-    
     <section id="reviews" class="review-section">
     <div id="review-link-container">
         <div class="invalid-link-message" id="invalid-link-message">
@@ -235,7 +192,12 @@
             </a>
         </div>
     </div>
-</section>
+    </section>
+         <section class="review" id="review">
+    <div class="review-list-container">
+        <div id="reviews-list">
+    </div>
+    </section>
 
 <div id="tutor-detail-popup" class="tutor-detail-popup">
     <div class="popup-content">
