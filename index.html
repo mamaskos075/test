@@ -3,334 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maskos Joki Tugas</title>
-    <link rel="stylesheet" href="joki.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Generator 100 Pesan WhatsApp</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input[type="text"], textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #25D366; color: white; border: none; border-radius: 5px; transition: background-color 0.3s; }
+        button:hover { background-color: #1EA953; }
+        #output { margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; }
+        .message-link { display: block; margin-bottom: 8px; padding: 8px; background-color: #e6ffed; border: 1px solid #c8e6c9; border-radius: 4px; text-decoration: none; color: #075E54; }
+        .warning { color: red; font-weight: bold; margin-bottom: 15px; }
+    </style>
 </head>
 <body>
 
-    <header class="header">
-        <div class="logo">
-            <a href="#">Maskos Joki Tugas</a>
-        </div>
-        <nav class="navbar">
-            <a href="#home">Home</a>
-            <a href="#produk">Produk</a>
-            <a href="#freelancer">Daftar Freelancer</a>
-            <a href="#kontak">Kontak</a>
-        </nav>
-        <div class="icons">
-            <div class="cart-icon-container">
-                <i class="fas fa-shopping-basket" id="keranjang"></i>
-                <span id="cart-count" class="cart-count">0</span>
-            </div>
-            <i class="fas fa-bars" id="hamburger-btn"></i>
-        </div>
-        
-        <div class="cart-popup" id="cart-popup">
-            <div class="cart-header">
-                <h3>Keranjang Belanja</h3>
-            </div>
-            <div class="cart-items" id="cart-items"></div>
-            <div class="cart-footer">
-                <div class="summary-item">
-                    <span class="summary-label">Total Produk:</span>
-                    <span id="sub-total-price">Rp 0</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Total Diskon:</span>
-                    <span id="discount-total-price">Rp 0</span>
-                </div>
-                <div class="total-price-container">
-                    <span>Total:</span>
-                    <span id="total-price">Rp 0</span>
-                </div>
-                <button class="checkout-btn" id="checkout-btn">Checkout Sekarang</button>
-            </div>
-        </div>
-    </header>
-      
-    <main class="main-content">
-        <section id="home">
-            <div class="search-bar-container">
-                <input type="text" class="search-input" placeholder="Cari produk joki...">
-                <button class="search-button"><i class="fas fa-search"></i></button>
-            </div>
-        </section>
-        
-        <section id="produk">
-            <h2 class="section-title">Produk Joki Maskos</h2>
-            <div class="product-container" id="product-list">
-                <div class="product-card" data-product-id="1">
-                    <img src="https://via.placeholder.com/300/e0e0e0" alt="Joki Tugas Makalah" class="product-image">
-                    <h3 class="product-title">Joki Tugas Makalah</h3>
-                    <p class="product-description">Solusi cepat dan tepat untuk tugas makalah Anda.</p>
-                    <div class="product-price">
-                        <span class="original-price">Rp 75.000</span>
-                        <span class="discount-price">Rp 30.000</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart">Tambahkan ke Keranjang <i class="fas fa-shopping-basket"></i></button>
-                        <button class="view-details">Lihat Detail Produk</button>
-                    </div>
-                </div>
-                <div class="product-card" data-product-id="2">
-                    <img src="https://via.placeholder.com/300/e0e0e0" alt="Joki Tugas Skripsi" class="product-image">
-                    <h3 class="product-title">Joki Tugas Skripsi</h3>
-                    <p class="product-description">Bantuan profesional untuk skripsi Anda.</p>
-                    <div class="product-price">
-                        <span class="original-price">Rp 120.000</span>
-                        <span class="discount-price">Rp 55.000</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart">Tambahkan ke Keranjang <i class="fas fa-shopping-basket"></i></button>
-                        <button class="view-details">Lihat Detail Produk</button>
-                    </div>
-                </div>
-                <div class="product-card" data-product-id="3">
-                    <img src="https://via.placeholder.com/300/e0e0e0" alt="Joki Tugas Coding" class="product-image">
-                    <h3 class="product-title">Joki Tugas Coding</h3>
-                    <p class="product-description">Solusi untuk masalah coding.</p>
-                    <div class="product-price">
-                        <span class="original-price">Rp 90.000</span>
-                        <span class="discount-price">Rp 40.000</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart">Tambahkan ke Keranjang <i class="fas fa-shopping-basket"></i></button>
-                        <button class="view-details">Lihat Detail Produk</button>
-                    </div>
-                </div>
-                <div class="product-card" data-product-id="4">
-                    <img src="https://via.placeholder.com/300/e0e0e0" alt="Joki Tugas Presentasi" class="product-image">
-                    <h3 class="product-title">Joki Tugas Presentasi</h3>
-                    <p class="product-description">Buat presentasi Anda lebih menarik dan profesional.</p>
-                    <div class="product-price">
-                        <span class="original-price">Rp 60.000</span>
-                        <span class="discount-price">Rp 25.000</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart">Tambahkan ke Keranjang <i class="fas fa-shopping-basket"></i></button>
-                        <button class="view-details">Lihat Detail Produk</button>
-                    </div>
-                </div>
-                <div class="product-card" data-product-id="5">
-                    <img src="https://via.placeholder.com/300/e0e0e0" alt="Joki Tugas Presentasi 2" class="product-image">
-                    <h3 class="product-title">Joki Tugas Presentasi 2</h3>
-                    <p class="product-description">Buat presentasi Anda lebih menarik dan profesional.</p>
-                    <div class="product-price">
-                        <span class="original-price">Rp 30.000</span>
-                        <span class="discount-price">Rp 25.000</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart">Tambahkan ke Keranjang <i class="fas fa-shopping-basket"></i></button>
-                        <button class="view-details">Lihat Detail Produk</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
- 
-    <div id="product-detail-popup" class="product-detail-popup">
-        <div class="popup-content">
-            <span class="close-popup-btn">&times;</span>
-            <h3 id="popup-product-title"></h3>
-            <p id="popup-product-description"></p>
-            <p id="popup-product-price"></p>
-            
-            <div class="attention-message">
-                ⚠️ **Perhatian:** Harga yang tertera adalah harga uang muka (DP). Harga total menyesuaikan tingkat kesulitan tugas.
-            </div>
-            
-            <button class="add-to-cart-popup">Tambahkan ke Keranjang</button>
-        </div>
-    </div>
-      
-    <section id="freelancer">
-        <h2 class="section-title">Tutor Profesional</h2>
-        <p class="section-description">Tutor profesional kami siap membantumu menyelesaikan tugas sekolah dan kuliah secara tepat waktu.</p>
+    <div class="container">
+        <h1>Generator 100 Pesan WhatsApp</h1>
 
-        <div class="tutor-container">
-            <div class="tutor-card" data-tutor-id="1">
-                <img src="https://via.placeholder.com/300" alt="Foto Tutor Zafina" class="tutor-photo">
-                <h3 class="tutor-name">Zafina</h3>
-                <p class="tutor-short-desc">Ahli dalam Matematika dan Fisika.</p>
-                <button class="view-tutor-details">Selengkapnya</button>
-            </div>
-            <div class="tutor-card" data-tutor-id="2">
-                <img src="https://via.placeholder.com/300" alt="Foto Tutor Rizal" class="tutor-photo">
-                <h3 class="tutor-name">Rizal</h3>
-                <p class="tutor-short-desc">Spesialis di bidang Desain Grafis dan Pemrograman.</p>
-                <button class="view-tutor-details">Selengkapnya</button>
-            </div>
-            <div class="tutor-card" data-tutor-id="3">
-                <img src="https://via.placeholder.com/300" alt="Foto Tutor Salma" class="tutor-photo">
-                <h3 class="tutor-name">Salma</h3>
-                <p class="tutor-short-desc">Pakar dalam Sastra dan Ilmu Sosial.</p>
-                <button class="view-tutor-details">Selengkapnya</button>
-            </div>
-        </div>
-    </section>
-       
-    <section id="reviews" class="review-section">
-        <div class="invalid-link-message" id="invalid-link-message">
-            <h2 class="section-title">Puas dengan layanan kami?</h2>
-            <p class="section-description">Berikan ulasan Anda sekarang dan dapatkan diskon spesial untuk pesanan selanjutnya!</p>
-            <a href="https://wa.me/NOMOR_HP_ANDA?text=Halo%20admin%20Maskos,%20saya%20ingin%20memberikan%20ulasan%20tentang%20layanan%20joki%20tugas%20web." target="_blank" class="whatsapp-btn">
-                <i class="fab fa-whatsapp"></i> Berikan Ulasanmu Sekarang
-            </a>
-        </div>
-        
-        <div class="review-list-container">
-            <div id="reviews-list">
-                 <div class="review-item">
-                    <div class="review-header">
-                        <span class="reviewer-info">Budi S.</span>
-                        <div class="review-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="review-service">Jasa yang digunakan: Joki Tugas Skripsi</p>
-                    <p class="review-text">Hasilnya sangat memuaskan, skripsi saya selesai tepat waktu dan mendapatkan nilai A!</p>
-                </div>
-                <div class="review-item">
-                    <div class="review-header">
-                        <span class="reviewer-info">Siti A.</span>
-                        <div class="review-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="review-service">Jasa yang digunakan: Joki Tugas Coding</p>
-                    <p class="review-text">Sangat terbantu untuk tugas pemrograman. Kodenya bersih dan mudah dipahami. Terima kasih!</p>
-                </div>
-                <div class="review-item">
-                    <div class="review-header">
-                        <span class="reviewer-info">Rina P.</span>
-                        <div class="review-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="review-service">Jasa yang digunakan: Joki Tugas Makalah</p>
-                    <p class="review-text">Makalah saya dikerjakan dengan rapi dan isinya sangat berbobot. Recomended banget!</p>
-                </div>
-                 <div class="review-item">
-                    <div class="review-header">
-                        <span class="reviewer-info">Agus S.</span>
-                        <div class="review-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="review-service">Jasa yang digunakan: Joki Tugas Presentasi</p>
-                    <p class="review-text">Presentasi dibuat dengan desain yang keren dan informatif. Pengerjaannya juga cepat.</p>
-                </div>
-            </div>
-        </div>
+        <p class="warning">⚠️ **PERHATIAN:** Tools ini hanya membuat link! Anda tetap harus **mengklik 100 link** dan **mengklik tombol Kirim di WhatsApp untuk setiap pesan!**</p>
 
-    </section>
+        <label for="targetNumber">Nomor Target (dengan kode negara, cth: 628123456789):</label>
+        <input type="text" id="targetNumber" value="628123456789">
 
-    <section id="other-services">
-        <h2 class="section-title">Jasa Lain dari Maskos</h2>
-        <div class="services-container">
-            <a href="#" class="service-btn">Cari Kos</a>
-            <a href="#" class="service-btn">Bikin Web Portofolio</a>
-            <a href="#" class="service-btn">Bikin CV Kerja</a>
-            <a href="#" class="service-btn">Maskos Courses</a>
-        </div>
-    </section>
+        <label for="messageContent">Isi Pesan Dasar (akan ditambahkan angka 1 hingga 100):</label>
+        <textarea id="messageContent" rows="3">Salam, ini adalah pesan massal ke-</textarea>
 
-    <footer class="footer">
-        <p>Joki Tugas by <a href="https://maskos.web.id" target="_blank">Maskos</a></p>
-    </footer>
+        <button onclick="generateLinks()">Buat 100 Link Pesan</button>
 
-    <a href="https://wa.me/NOMOR_HP_ANDA?text=Halo%20Maskos,%20saya%20tertarik%20dengan%20layanan%20joki%20tugas." target="_blank" class="whatsapp-float-btn">
-        <i class="fab fa-whatsapp"></i>
-        <span>Chat Maskos</span>
-    </a>
-
-    <div id="tutor-detail-popup" class="tutor-detail-popup">
-        <div class="popup-content">
-            <span class="close-popup-btn-tutor">&times;</span>
-            <div class="popup-header">
-                <img id="popup-tutor-photo" src="" alt="Foto Tutor" class="popup-tutor-photo">
-                <h3 id="popup-tutor-name"></h3>
+        <div id="output">
             </div>
-            <div class="popup-info">
-                <p><strong>Pendidikan:</strong> <span id="popup-tutor-education"></span></p>
-                <p><strong>Tugas Terselesaikan:</strong> <span id="popup-tutor-tasks"></span></p>
-                <p id="popup-tutor-description"></p>
-            </div>
-            <button class="select-tutor-btn" id="select-tutor-btn">Pilih Tutor</button>
-        </div>
     </div>
 
-    <div id="custom-alert" class="custom-popup">
-        <div class="custom-popup-content">
-            <span id="custom-alert-message">Pesan notifikasi</span>
-            <button id="custom-alert-close" class="custom-popup-btn">OK</button>
-        </div>
-    </div>
+    <script src="script.js"></script>
 
-    <div id="custom-confirm" class="custom-popup">
-        <div class="custom-popup-content">
-            <span id="custom-confirm-message">Pesan konfirmasi</span>
-            <div class="custom-popup-buttons">
-                <button id="confirm-yes" class="custom-popup-btn confirm-yes">Ya</button>
-                <button id="confirm-no" class="custom-popup-btn confirm-no">Tidak</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="payment-popup" class="custom-popup">
-        <div class="custom-popup-content">
-            <span id="close-payment-popup" class="close-popup-btn">&times;</span>
-            <h3>Lengkapi Data Anda</h3>
-            <form id="payment-form">
-                <div class="form-group">
-                    <label for="customer-name">Nama Lengkap</label>
-                    <input type="text" id="customer-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="customer-phone">Nomor Telepon (WhatsApp)</label>
-                    <input type="tel" id="customer-phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="tutor-select">Pilih Tutor</label>
-                    <select id="tutor-select" required>
-                        <option value="">-- Pilih Tutor --</option>
-                        <option value="Zafina">Zafina</option>
-                        <option value="Rizal">Rizal</option>
-                        <option value="Salma">Salma</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="payment-method-select">Metode Pembayaran</label>
-                    <select id="payment-method-select" required>
-                        <option value="">-- Pilih Metode --</option>
-                        <option value="Transfer Bank BCA">Transfer Bank BCA</option>
-                        <option value="E-Wallet (Dana, OVO, GoPay)">E-Wallet (Dana, OVO, GoPay)</option>
-                        <option value="QRIS">QRIS</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn">Lanjutkan ke WhatsApp</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="main.js"></script>
 </body>
 </html>
