@@ -1,0 +1,165 @@
+body {
+    font-family: 'Times New Roman', serif; /* Font yang lebih klasik/serius */
+    background-color: #1a0000; /* Hitam sangat gelap dengan sentuhan merah */
+    color: #f0f0f0; /* Teks putih keabuan agar kontras */
+    display: flex;
+    flex-direction: column; /* Ubah ke kolom untuk footer */
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.countdown-container {
+    background: rgba(0, 0, 0, 0.7); /* Latar belakang semi-transparan hitam */
+    border: 1px solid #8b0000; /* Border merah gelap */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.5); /* Shadow merah menyala */
+    text-align: center;
+    max-width: 90%;
+    width: 600px;
+    margin-bottom: 30px; /* Jarak dengan footer */
+}
+
+h1 {
+    color: #ff3333; /* Merah menyala untuk judul */
+    margin-bottom: 10px;
+    font-size: 2.5em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+p {
+    font-size: 1.2em;
+    color: #ccc; /* Teks penjelasan abu-abu terang */
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+#timer {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.timer-segment {
+    background: #440000; /* Latar belakang segmen merah gelap */
+    color: #ff6666; /* Angka merah terang */
+    padding: 15px 10px;
+    border-radius: 5px; /* Sudut lebih tajam */
+    min-width: 65px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3); /* Shadow merah samar */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.timer-segment:hover {
+    transform: translateY(-5px) scale(1.02);
+    background-color: #660000; /* Sedikit lebih terang saat hover */
+}
+
+.timer-segment span:first-child {
+    font-family: 'Courier New', monospace; /* Font monospace untuk kesan digital/kode */
+    font-size: 2.8em; /* Ukuran lebih besar */
+    font-weight: bold;
+}
+
+.timer-segment span:last-child {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    margin-top: 5px;
+    color: #ff9999; /* Label merah lebih terang */
+}
+
+#message {
+    font-size: 1.6em;
+    color: #ffcc00; /* Warna kuning emas untuk pesan akhir */
+    font-weight: bold;
+    margin-top: 20px;
+    text-shadow: 0 0 5px rgba(255, 204, 0, 0.7); /* Efek glow */
+}
+
+/* --- FOOTER --- */
+.footer {
+    color: #8b0000; /* Merah gelap untuk footer */
+    font-size: 0.9em;
+    margin-top: 40px;
+    padding: 15px 20px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Latar belakang footer semi-transparan */
+    border-top: 1px solid #440000; /* Border atas merah gelap */
+    border-radius: 5px;
+    max-width: 90%;
+    width: 700px; /* Lebih lebar dari container utama untuk kesan "mengikat" */
+    box-shadow: 0 0 10px rgba(139, 0, 0, 0.2);
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* --- MEDIA QUERIES UNTUK RESPONSIVITAS HP --- */
+
+@media (max-width: 600px) {
+    .countdown-container {
+        padding: 20px 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(139, 0, 0, 0.3); /* Tetap ada shadow tapi lebih kecil */
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+        letter-spacing: 1px;
+    }
+
+    p {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
+
+    #timer {
+        flex-wrap: wrap;
+        gap: 8px; /* Kurangi gap lagi */
+    }
+    
+    .timer-segment {
+        width: calc(50% - 8px); /* Setiap 2 segmen dalam 1 baris */
+        min-width: unset;
+        padding: 10px 5px;
+    }
+    
+    .timer-segment span:first-child {
+        font-size: 2em;
+    }
+
+    .timer-segment span:last-child {
+        font-size: 0.7em;
+    }
+
+    #message {
+        font-size: 1.4em;
+    }
+
+    .footer {
+        font-size: 0.8em;
+        padding: 10px;
+        margin-top: 30px;
+        max-width: 95%; /* Lebih lebar di HP */
+        width: unset;
+    }
+
+    /* Penyesuaian khusus untuk mode 4 segmen (agar tidak pecah di bawah 400px) */
+    @media (max-width: 400px) {
+        .timer-segment {
+             width: calc(100% - 8px); /* Setiap 1 segmen dalam 1 baris */
+             flex-grow: 0;
+             margin-bottom: 8px;
+        }
+    }
+}
